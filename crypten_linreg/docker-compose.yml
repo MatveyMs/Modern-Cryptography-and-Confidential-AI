@@ -1,0 +1,57 @@
+services:
+  worker1:
+    build: .
+    command: python -m worker call tasks.mpc:mul
+    environment:
+      # communicator
+      - RENDEZVOUS=env://
+      - MASTER_ADDR=worker1
+      - MASTER_PORT=29500
+      - WORLD_SIZE=2
+      - RANK=0
+      # crypten
+      - CRYPTEN_PROVIDER_NAME=TTP
+      - PRECISION=16
+      # ml
+      - EPOCHS=30
+      # logging
+      - LOGLEVEL=INFO
+      - PYTHONUNBUFFERED=1
+    volumes:
+      - ./data/worker1:/data/linreg
+  worker2:
+    build: .
+    command: python -m worker call tasks.mpc:mul
+    environment:
+      # communicator
+      - RENDEZVOUS=env://
+      - MASTER_ADDR=worker1
+      - MASTER_PORT=29500
+      - WORLD_SIZE=2
+      - RANK=1
+      # crypten
+      - CRYPTEN_PROVIDER_NAME=TTP
+      - PRECISION=16
+      # ml
+      - EPOCHS=30
+      # logging
+      - LOGLEVEL=INFO
+      - PYTHONUNBUFFERED=1
+    volumes:
+      - ./data/worker2:/data/linreg
+  ttp:
+    build: .
+    command: python -m worker call tasks.mpc:ttp
+    environment:
+      # communicator
+      - RENDEZVOUS=env://
+      - MASTER_ADDR=worker1
+      - MASTER_PORT=29500
+      - CRYPTEN_PROVIDER_NAME=TTP
+      - WORLD_SIZE=2
+      - RANK=2
+      # crypten
+      - CRYPTEN_PROVIDER_NAME=TTP
+      - PRECISION=16
+      # logging
+      - LOGLEVEL=ERROR
