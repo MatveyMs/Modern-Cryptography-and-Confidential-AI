@@ -1,0 +1,51 @@
+services:
+  worker1:
+    build: .
+    command: python -m worker call tasks.mpc:linreg_aug
+    environment:
+      - RENDEZVOUS=env://
+      - MASTER_ADDR=worker1
+      - MASTER_PORT=29500
+      - WORLD_SIZE=2
+      - RANK=0
+      - CRYPTEN_PROVIDER_NAME=TTP
+      - PRECISION=16
+      - EPOCHS=30
+      - LOGLEVEL=INFO
+      - PYTHONUNBUFFERED=1
+    volumes:
+      - ./data/homework/x_train_norm_worker1.pth:/data/linreg/x_train_norm_worker1.pth
+      - ./data/homework/y_train_worker1.pth:/data/linreg/y_train_worker1.pth
+      - ./data/homework/x_test_norm_worker1.pth:/data/linreg/x_test_norm_worker1.pth
+      - ./data/homework/y_test_worker1.pth:/data/linreg/y_test_worker1.pth
+
+  worker2:
+    build: .
+    command: python -m worker call tasks.mpc:linreg_aug
+    environment:
+      - RENDEZVOUS=env://
+      - MASTER_ADDR=worker1
+      - MASTER_PORT=29500
+      - WORLD_SIZE=2
+      - RANK=1
+      - CRYPTEN_PROVIDER_NAME=TTP
+      - PRECISION=16
+      - EPOCHS=30
+      - LOGLEVEL=INFO
+      - PYTHONUNBUFFERED=1
+    volumes:
+      - ./data/homework/x_train_norm_worker2.pth:/data/linreg/x_train_norm_worker2.pth
+      - ./data/homework/y_train_worker2.pth:/data/linreg/y_train_worker2.pth
+
+  ttp:
+    build: .
+    command: python -m worker call tasks.mpc:ttp
+    environment:
+      - RENDEZVOUS=env://
+      - MASTER_ADDR=worker1
+      - MASTER_PORT=29500
+      - WORLD_SIZE=2
+      - RANK=2
+      - CRYPTEN_PROVIDER_NAME=TTP
+      - PRECISION=16
+      - LOGLEVEL=ERROR
