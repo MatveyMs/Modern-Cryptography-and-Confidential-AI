@@ -1,0 +1,42 @@
+services:
+  ttp:
+    build: .
+    container_name: ttp
+    environment:
+      - ROLE=ttp
+      # Здесь задаём истинные a и b
+      - A_TRUE=20
+      - B_TRUE=100
+    volumes:
+      - ./triples:/app/triples
+    command: ["python", "scripts/ttp_bitwise.py"]
+
+  party0:
+    build: .
+    container_name: party0
+    environment:
+      - ROLE=party
+      - RANK=0
+      - WORLD_SIZE=2
+      - MASTER_ADDR=party0
+      - MASTER_PORT=12355
+    depends_on:
+      - ttp
+    volumes:
+      - ./triples:/app/triples
+    command: ["python", "scripts/party_bitwise.py", "--rank", "0"]
+
+  party1:
+    build: .
+    container_name: party1
+    environment:
+      - ROLE=party
+      - RANK=1
+      - WORLD_SIZE=2
+      - MASTER_ADDR=party0
+      - MASTER_PORT=12355
+    depends_on:
+      - ttp
+    volumes:
+      - ./triples:/app/triples
+    command: ["python", "scripts/party_bitwise.py", "--rank", "1"]
