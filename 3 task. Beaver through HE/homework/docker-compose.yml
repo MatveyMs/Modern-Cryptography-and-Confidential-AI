@@ -1,0 +1,30 @@
+services:
+  party0:
+    build: .
+    container_name: party0
+    environment:
+      - ROLE=party
+      - RANK=0
+      - WORLD_SIZE=2
+      - MASTER_ADDR=party0
+      - MASTER_PORT=12355
+      - NUM_TRIPLES=10
+    volumes:
+      - ./triples:/app/triples
+    command: ["python", "scripts/party.py", "--rank", "0"]
+
+  party1:
+    build: .
+    container_name: party1
+    environment:
+      - ROLE=party
+      - RANK=1
+      - WORLD_SIZE=2
+      - MASTER_ADDR=party0
+      - MASTER_PORT=12355
+      - NUM_TRIPLES=10
+    depends_on:
+      - party0
+    volumes:
+      - ./triples:/app/triples
+    command: ["python", "scripts/party.py", "--rank", "1"]
