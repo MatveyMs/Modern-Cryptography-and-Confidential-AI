@@ -10,3 +10,6 @@ Implementation of a protocol for comparing two numbers using Beaver triples
 
 ## 3 task:
 Implementation of the Beaver triple generation protocol using homomorphic encryption and the phe library
+
+## 4 task:
+Advanced differential privacy methods and comparison of different implementations
